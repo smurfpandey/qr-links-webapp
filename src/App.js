@@ -14,15 +14,13 @@ class App extends Component {
 
     this.handleWebRTCSignal = this.handleWebRTCSignal.bind(this);
     this.whenSocketIsReady = this.whenSocketIsReady.bind(this);
-
-    this.socket = openSocket('http://localhost:5000');
-    this.socket.on('ready', this.whenSocketIsReady);
   }
 
   handleWebRTCSignal = async (offer) => {
     this.setState({ offer: offer });
     this.socket.emit('offer', offer, (data) => {
-      this.setState({ offerId: data.id });
+      this.setState({ peerId: data.id });
+      localStorage.setItem('peer-id', data.id);
     });
   } 
 
@@ -35,7 +33,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    
+    this.socket = openSocket('http://localhost:5000');
+    this.socket.on('ready', this.whenSocketIsReady);
   }
 
   render() {

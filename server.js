@@ -18,16 +18,22 @@ const start = async () => {
         console.log('connection aaya');
         socket.emit('ready');
         socket.on('offer', function (offerData, fn) {
-            let offerId = generate('1234567890ABCDEF', 8) //=> "4f90d13a42"
-            if(objOffers[offerId]) {
-                offerId = generate('1234567890ABCDEF', 10)
+            let peerId = offerData.peerId;            
+            if(!peerId) {
+                // generate new peer id
+                peerId = generate('1234567890ABCDEF', 8) //=> "4f90d13a42"
+                if(objOffers[peerId]) {
+                    peerId = generate('1234567890ABCDEF', 10)
+                }
             }
-            objOffers[offerId] = {
+            
+            objOffers[peerId] = {
                 clientId: socket.id,
                 offerData: offerData,
-                ackNumber: offerId
+                ackNumber: peerId
             };
-            fn({ id: offerId });
+            console.log('got offer from: ' + peerId);
+            fn({ id: peerId });
         });
     });
 
