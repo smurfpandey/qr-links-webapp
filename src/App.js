@@ -26,10 +26,10 @@ class App extends Component {
 
   whenSocketIsReady() {
     // attach listeners
-    if(!this.webPeer) {
-      this.webPeer = new Peer({ initiator: true, trickle: false });
-      this.webPeer.on('signal', this.handleWebRTCSignal);
-    }        
+    // if(!this.webPeer) {
+    //   this.webPeer = new Peer({ initiator: true, trickle: false });
+    //   this.webPeer.on('signal', this.handleWebRTCSignal);
+    // }        
   }
 
   componentDidMount() {
