@@ -4,7 +4,7 @@ import logo from './logo.svg';
 import './App.css';
 
 import { initSocket } from './SocketHandler';
-import { createPeer } from './PeerHandler';
+import { createPeer, Peer } from './PeerHandler';
 import Topbar from './components/topbar';
 import PairWithExtension from './components/pair-with-extension';
 
@@ -38,6 +38,12 @@ class App extends Component {
   componentDidMount() {
     initSocket();
     createPeer();
+
+    Peer.on('data', function(data) {
+      let objData = JSON.parse(data);
+
+      window.open(objData.url, '_blank');
+    });
   }
 
   render() {
