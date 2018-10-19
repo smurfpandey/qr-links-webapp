@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+
 import logo from './logo.svg';
 import './App.css';
 
 import Peer from 'simple-peer';
 import openSocket from 'socket.io-client';
+
+import Topbar from './components/topbar';
+import PairWithExtension from './components/pair-with-extension';
 
 class App extends Component {
   constructor(props) {
@@ -40,23 +44,11 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <Topbar />
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <p>
-            This is something: {this.state.offerId}
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
         </header>
+        <PairWithExtension />
       </div>
     );
   }
