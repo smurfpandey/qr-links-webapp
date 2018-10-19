@@ -3,9 +3,8 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import Peer from 'simple-peer';
-import openSocket from 'socket.io-client';
-
+import { initSocket } from './SocketHandler';
+import { createPeer } from './PeerHandler';
 import Topbar from './components/topbar';
 import PairWithExtension from './components/pair-with-extension';
 
@@ -37,8 +36,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.socket = openSocket('http://localhost:5000');
-    this.socket.on('ready', this.whenSocketIsReady);
+    initSocket();
+    createPeer();
   }
 
   render() {

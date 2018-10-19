@@ -8,6 +8,9 @@ import LinkIcon from '@material-ui/icons/Link';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import green from '@material-ui/core/colors/green';
 
+import { Socket } from '../SocketHandler';
+import { Peer } from '../PeerHandler';
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -51,14 +54,43 @@ class PairWithExtension extends Component {
   state = {
     loading: false,
     success: false,
+    peerId: ''
   };
   
   componentWillUnmount() {
     clearTimeout(this.timer);
   }
 
+  handlePeerIdChange = event => {
+    this.setState({ peerId: event.target.value });
+  };
+
   handlePairClick = () => {
-    if (!this.state.loading) {
+    if (this.state.loading) {
+      return;
+    }
+    let peerId = this.state.peerId;
+
+    if(!peerId) {
+      return;
+    }
+
+    peerId = peerId.toUpperCase();
+    Socket.emit('DO_I_HAVE_A_OFFER', { peerId: peerId }, (data) => {
+      if(!data.offerData) {
+        return;
+      }
+
+      Peer.on('signal', (answerData) => {
+        // send answer to socket
+        Socket.emit('I_HAVE_AN_ANSWER', { answer: answerData, peerId: peerId }, (data) => {
+
+        })
+      });
+      Peer.signal(data.offerData);
+    });
+
+
       this.setState(
         {
           success: false,
@@ -73,11 +105,11 @@ class PairWithExtension extends Component {
           }, 2000);
         },
       );
-    }
+    
   };
 
   render() {
-    const { loading, success } = this.state;
+    const { loading } = this.state;
     const { classes } = this.props;
     return ( 
       <div className={classes.root}>
@@ -85,12 +117,14 @@ class PairWithExtension extends Component {
           <TextField
             id="pair-code"
             label="Pair Code"
+            value={this.state.peerId}
             className={classes.textField}
             inputProps={{
               className: classes.input
             }}
             margin="normal"
             variant="outlined"
+            onChange={this.handlePeerIdChange}
           />
           <div className={classes.btnHolder}>
             <Button variant="contained" color="primary" className={classes.button}

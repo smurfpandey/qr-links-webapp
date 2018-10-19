@@ -17,6 +17,8 @@ const start = async () => {
     io.on('connection', function (socket) {
         console.log('connection aaya');
         socket.emit('ready');
+
+        // when offer received from initiator
         socket.on('offer', function (offerData, fn) {
             let peerId = offerData.peerId;            
             if(!peerId) {
@@ -29,11 +31,30 @@ const start = async () => {
             
             objOffers[peerId] = {
                 clientId: socket.id,
-                offerData: offerData,
-                ackNumber: peerId
+                offerData: offerData
             };
             console.log('got offer from: ' + peerId);
             fn({ id: peerId });
+        });
+
+        // when request received for offer 
+        socket.on('DO_I_HAVE_A_OFFER', function (data, fn) {
+          let peerId = data.peerId;
+
+          if(!peerId) {
+            return fn({ status: '400' });
+          }
+
+          if(!objOffers[peerId]) {
+            return fn({ status: '404', data: peerId, objOffers: objOffers });
+          }
+
+          return fn(objOffers[peerId]);
+        });
+
+        socket.on('I_HAVE_AN_ANSWER', function(data, fn) {
+          let socketId = objOffers[data.peerId].clientId;
+          io.to(socketId).emit('I_HAVE_AN_ANSWER', data.answer);
         });
     });
 
